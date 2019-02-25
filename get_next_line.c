@@ -6,7 +6,7 @@
 /*   By: chford <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/21 09:59:02 by chford            #+#    #+#             */
-/*   Updated: 2019/02/24 20:11:36 by chford           ###   ########.fr       */
+/*   Updated: 2019/02/24 20:19:36 by chford           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,14 +69,14 @@ char	*prepare_s1(t_cursor fd_store, int length)
 		return (0);
 	while (j < length)
 	{
-		s1[j] = (fd_store.last)[j + i];
+		s1[j] = (fd_store.s)[j + i];
 		j++;
 	}
 	s1[j] = '\0';
 	return (s1);
 }
 
-char	*prepare_s2(t_cursor *fd_store, int fd, int *return_val)
+char	*prepare_s2(t_cursor *f, int fd, int *return_val)
 {
 	char	*tmp;
 	char	*s2;
@@ -85,23 +85,23 @@ char	*prepare_s2(t_cursor *fd_store, int fd, int *return_val)
 
 	s2 = (char *)malloc(sizeof(char) * 1);
 	s2[0] = '\0';
-	while (!(ft_strichr(fd_store->last, '\n', fd_store->value))
-		   	&& (ret = read(fd, fd_store->last, BUFF_SIZE)))
+	while (!(ft_strichr(f->s, '\n', f->value)) && (ret = read(fd, f->s, BUFF_SIZE)))
 	{
-		((fd_store[fd]).last)[ret] = '\0';
+		((f[fd]).s)[ret] = '\0';
 		if (!(tmp = ft_strdup(s2)))
 			return (0);
-		length = count_line_chars(fd_store->last, 0);
+		length = count_line_chars(f->s, 0);
 		length = (length < 0) ? (length * -1) : length;
 		free (s2);
-		fd_store->value = 0;
-		if (!(s2 = ft_strjoin_nl(tmp, fd_store->last)))
+		f->value = 0;
+		if (!(s2 = ft_strjoin_nl(tmp, f->s)))
 			return (0);
 		free(tmp);
 		tmp = 0;
 	}
+	f->touched = 1;
 	*return_val = (ret == 0) ? 0 : 1;
-	fd_store->value = length + 1;
+	f->value = length + 1;
 	return (s2);
 }
 
@@ -115,7 +115,7 @@ int		get_next_line(const int fd, char **line)
 	s1 = 0;
 	if ((fd_store[fd]).touched == 1)
 	{
-		length = count_line_chars((fd_store[fd]).last, (fd_store[fd]).value);
+		length = count_line_chars((fd_store[fd]).s, (fd_store[fd]).value);
 		if (!(s1 = prepare_s1(fd_store[fd], length)))
 			return (-1);
 		if (length < 0)
@@ -126,7 +126,6 @@ int		get_next_line(const int fd, char **line)
 	}
 	else
 		(fd_store[fd]).value = 0;
-	(fd_store[fd]).touched = 1;
 	s2 = prepare_s2(&(fd_store[fd]), fd, &length);
 	if (!(*line = (s1 && s2) ? ft_strjoin(s1, s2) : ft_strdup(s2)))
 		return (-1);
