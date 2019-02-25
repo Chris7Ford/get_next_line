@@ -6,7 +6,7 @@
 /*   By: chford <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/21 09:59:02 by chford            #+#    #+#             */
-/*   Updated: 2019/02/24 13:39:37 by chford           ###   ########.fr       */
+/*   Updated: 2019/02/24 20:11:36 by chford           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,16 +41,16 @@ char	*ft_strjoin_nl(char *s1, char *s2)
 	j = count_line_chars(s2, 0);
 	i = (i < 0) ? (i * -1) : i;
 	j = (j < 0) ? (j * -1) : j;
-	string = (char *)malloc(sizeof(char) * (i + j));
+	string = (char *)malloc(sizeof(char) * (i + j + 1));
 	if (!string)
 		return (0);
 	i = 0;
 	j = 0;
 	l = 0;
-	while (s1[l] != '\0')
+	while (s1[l] != '\0' && s1[l] != '\n')
 		string[i++] = s1[l++];
 	l = 0;
-	while (s2[l] != '\0')
+	while (s2[l] != '\0' && s2[l] != '\n')
 		string[i + j++] = s2[l++];
 	string[i + j] = '\0';
 	return (string);
@@ -65,19 +65,19 @@ char	*prepare_s1(t_cursor fd_store, int length)
 	i = fd_store.value;
 	j = 0;
 	length = (length < 0) ? length * -1 : length;
-	s1 = (char *)malloc(sizeof(char) * (length + 1));
+	if(!(s1 = (char *)malloc(sizeof(char) * (length + 1))))
+		return (0);
 	while (j < length)
 	{
-		s1[j] = fd_store.last[j + i];
+		s1[j] = (fd_store.last)[j + i];
 		j++;
 	}
 	s1[j] = '\0';
 	return (s1);
 }
 
-char	*prepare_s2(t_cursor *fd_store, int fd)
+char	*prepare_s2(t_cursor *fd_store, int fd, int *return_val)
 {
-	char	buffer[BUFF_SIZE + 1];
 	char	*tmp;
 	char	*s2;
 	int		length;
@@ -85,19 +85,23 @@ char	*prepare_s2(t_cursor *fd_store, int fd)
 
 	s2 = (char *)malloc(sizeof(char) * 1);
 	s2[0] = '\0';
-	while ((ret = read(fd, buffer, BUFF_SIZE)) && buffer[ret - 1] != '\n')
+	while (!(ft_strichr(fd_store->last, '\n', fd_store->value))
+		   	&& (ret = read(fd, fd_store->last, BUFF_SIZE)))
 	{
-		buffer[ret] = '\0';
-		tmp = ft_strdup(s2);
-		ft_strcpy(fd_store->last, buffer);
-		length = count_line_chars(buffer, 0);
+		((fd_store[fd]).last)[ret] = '\0';
+		if (!(tmp = ft_strdup(s2)))
+			return (0);
+		length = count_line_chars(fd_store->last, 0);
 		length = (length < 0) ? (length * -1) : length;
 		free (s2);
-		s2 = ft_strjoin_nl(tmp, buffer);
+		fd_store->value = 0;
+		if (!(s2 = ft_strjoin_nl(tmp, fd_store->last)))
+			return (0);
 		free(tmp);
 		tmp = 0;
 	}
-	fd_store->value += length;
+	*return_val = (ret == 0) ? 0 : 1;
+	fd_store->value = length + 1;
 	return (s2);
 }
 
@@ -112,10 +116,10 @@ int		get_next_line(const int fd, char **line)
 	if ((fd_store[fd]).touched == 1)
 	{
 		length = count_line_chars((fd_store[fd]).last, (fd_store[fd]).value);
-		s1 = prepare_s1(fd_store[fd], length);
+		if (!(s1 = prepare_s1(fd_store[fd], length)))
+			return (-1);
 		if (length < 0)
 		{
-			fd_store[fd].value += (length * -1);
 			*line = s1;
 			return (1);
 		}
@@ -123,11 +127,10 @@ int		get_next_line(const int fd, char **line)
 	else
 		(fd_store[fd]).value = 0;
 	(fd_store[fd]).touched = 1;
-	s2 = prepare_s2(&(fd_store[fd]), fd);
-	length = count_line_chars(s2, 0);
-	*line = (s1 && s2) ? ft_strjoin(s1, s2) : ft_strdup(s2);
+	s2 = prepare_s2(&(fd_store[fd]), fd, &length);
+	if (!(*line = (s1 && s2) ? ft_strjoin(s1, s2) : ft_strdup(s2)))
+		return (-1);
 	free(s1);
 	free(s2);
-	(fd_store[fd]).value += length + 1;
-	return (0);
+	return (length);
 }
