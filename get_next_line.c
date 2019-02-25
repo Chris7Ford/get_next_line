@@ -6,7 +6,7 @@
 /*   By: chford <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/21 09:59:02 by chford            #+#    #+#             */
-/*   Updated: 2019/02/24 20:19:36 by chford           ###   ########.fr       */
+/*   Updated: 2019/02/24 20:33:22 by chford           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,23 +56,24 @@ char	*ft_strjoin_nl(char *s1, char *s2)
 	return (string);
 }
 
-char	*prepare_s1(t_cursor fd_store, int length)
+char	*prepare_s1(t_cursor *fd_store, int length)
 {
 	int				i;
 	int				j;
 	char			*s1;
 
-	i = fd_store.value;
+	i = fd_store->value;
 	j = 0;
 	length = (length < 0) ? length * -1 : length;
 	if(!(s1 = (char *)malloc(sizeof(char) * (length + 1))))
 		return (0);
 	while (j < length)
 	{
-		s1[j] = (fd_store.s)[j + i];
+		s1[j] = (fd_store->s)[j + i];
 		j++;
 	}
 	s1[j] = '\0';
+	fd_store->value += length + 1;
 	return (s1);
 }
 
@@ -116,7 +117,7 @@ int		get_next_line(const int fd, char **line)
 	if ((fd_store[fd]).touched == 1)
 	{
 		length = count_line_chars((fd_store[fd]).s, (fd_store[fd]).value);
-		if (!(s1 = prepare_s1(fd_store[fd], length)))
+		if (!(s1 = prepare_s1(&(fd_store[fd]), length)))
 			return (-1);
 		if (length < 0)
 		{
