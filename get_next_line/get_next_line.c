@@ -6,7 +6,7 @@
 /*   By: chford <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/21 09:59:02 by chford            #+#    #+#             */
-/*   Updated: 2019/02/25 19:36:26 by chford           ###   ########.fr       */
+/*   Updated: 2019/02/25 21:19:10 by chford           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ char	*ft_strjoin_nl(char *s1, char *s2)
 	l = 0;
 	while (s1[l] != '\0' && s1[l] != '\n')
 		string[i++] = s1[l++];
+	free(s1);
 	l = 0;
 	while (s2[l] != '\0' && s2[l] != '\n')
 		string[i + j++] = s2[l++];
@@ -62,9 +63,11 @@ char	*prepare_s1(t_cursor *fd_s, int *length)
 	int				j;
 	char			*s1;
 
+	*length = (*length < 0) ? (*length) * -1 : *length;
+	if (fd_s->complete && fd_s->value != 0 && fd_s->s[(fd_s->value)] == '\0')
+		return (0);
 	i = fd_s->value;
 	j = 0;
-	*length = (*length < 0) ? (*length) * -1 : *length;
 	if(!(s1 = (char *)malloc(sizeof(char) * (*length + 1))))
 		return (0);
 	while (j < *length)
@@ -81,7 +84,6 @@ char	*prepare_s1(t_cursor *fd_s, int *length)
 
 char	*prepare_s2(t_cursor *f, int fd, int *return_val, int index)
 {
-	char	*tmp;
 	char	*s2;
 	int		length;
 	int		ret;
@@ -91,20 +93,16 @@ char	*prepare_s2(t_cursor *f, int fd, int *return_val, int index)
 	while (!(ft_strichr(f->s, '\n', index)) && (ret = read(fd, f->s, BUFF_SIZE)))
 	{
 		((f)->s)[ret] = '\0';
-		if (!(tmp = ft_strdup(s2)))
-			return (0);
 		length = count_line_chars(f->s, 0);
 		length = (length < 0) ? (length * -1) : length;
-		free (s2);
 		index = 0;
-		if (!(s2 = ft_strjoin_nl(tmp, f->s)))
+		if (!(s2 = ft_strjoin_nl(s2, f->s)))
 			return (0);
-		free(tmp);
-		tmp = 0;
 		f->value = length + 1;
 	}
 	f->touched = 1;
 	*return_val = (ret == 0) ? 0 : 1;
+	f->complete = (ret < BUFF_SIZE) ? 1 : 0;
 	return (s2);
 }
 

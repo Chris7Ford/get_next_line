@@ -1,30 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: chford <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/02/21 09:42:05 by chford            #+#    #+#             */
-/*   Updated: 2019/02/25 20:54:02 by chford           ###   ########.fr       */
+/*   Created: 2019/02/25 19:59:04 by chford            #+#    #+#             */
+/*   Updated: 2019/02/25 20:08:28 by chford           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
+#include "../get_next_line/libft/libft.h"
+#include "../get_next_line/get_next_line.h"
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
-# define	FD_MAX 1023
-# define	BUFF_SIZE 50
-typedef struct s_cursor		t_cursor;
-
-struct						s_cursor
+int		main(void)
 {
-	int						value;
-	char					touched;
-	char					complete;
-	char					s[BUFF_SIZE + 1];
-};
+	char	*string;
+	int		fd;
 
-int			count_line_chars(char *string, int i);
-int			get_next_line(const int fd, char **line);
-#endif
+	fd = open ("book", O_RDONLY);
+	if (fd == -1)
+		ft_putstr("OPENING FAILED BOI");
+	while (get_next_line(fd, &string) == 1)
+	{
+		ft_putstr(string);
+		ft_putchar('\n');
+		free(string);
+	}
+	return (0);
+}
