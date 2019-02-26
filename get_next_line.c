@@ -6,7 +6,7 @@
 /*   By: chford <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/21 09:59:02 by chford            #+#    #+#             */
-/*   Updated: 2019/02/25 09:37:23 by chford           ###   ########.fr       */
+/*   Updated: 2019/02/25 19:36:26 by chford           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ char	*prepare_s2(t_cursor *f, int fd, int *return_val, int index)
 	index = f->value;
 	while (!(ft_strichr(f->s, '\n', index)) && (ret = read(fd, f->s, BUFF_SIZE)))
 	{
-		((f[fd]).s)[ret] = '\0';
+		((f)->s)[ret] = '\0';
 		if (!(tmp = ft_strdup(s2)))
 			return (0);
 		length = count_line_chars(f->s, 0);

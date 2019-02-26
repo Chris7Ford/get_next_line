@@ -6,7 +6,7 @@
 /*   By: chford <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/21 09:42:05 by chford            #+#    #+#             */
-/*   Updated: 2019/02/24 20:21:43 by chford           ###   ########.fr       */
+/*   Updated: 2019/02/25 17:10:32 by chford           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ struct						s_cursor
 {
 	int						value;
 	char					touched;
-	char					s[BUFF_SIZE];
+	char					s[BUFF_SIZE + 1];
 };
 
 int			count_line_chars(char *string, int i);
