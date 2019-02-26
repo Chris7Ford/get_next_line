@@ -6,15 +6,15 @@
 /*   By: chford <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/21 09:42:05 by chford            #+#    #+#             */
-/*   Updated: 2019/02/25 20:54:02 by chford           ###   ########.fr       */
+/*   Updated: 2019/02/26 07:47:03 by chford           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
+# define FD_MAX 1023
+# define BUFF_SIZE 50
 
-# define	FD_MAX 1023
-# define	BUFF_SIZE 50
 typedef struct s_cursor		t_cursor;
 
 struct						s_cursor

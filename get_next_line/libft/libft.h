@@ -6,7 +6,7 @@
 /*   By: chford <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/11 18:04:30 by chford            #+#    #+#             */
-/*   Updated: 2019/02/24 19:26:42 by chford           ###   ########.fr       */
+/*   Updated: 2019/02/26 07:25:18 by chford           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,8 @@ void	ft_lstiter(t_list *lst, void(*f)(t_list *elem));
 char	*ft_itoa(int n);
 int		ft_tolower(int c);
 void	ft_lstadd(t_list **alst, t_list *new);
-void	ft_lstpush(t_list **begin_list, void const *content, size_t content_size);
+void	ft_lstpush(t_list **begin_list, void const *content,
+		size_t content_size);
 char	**ft_strsplit(char const *s, char c);
 int		ft_strnequ(char const *s1, char const *s2, size_t n);
 int		ft_strequ(char const *s1, char const *s2);

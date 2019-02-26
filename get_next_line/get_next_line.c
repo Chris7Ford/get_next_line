@@ -6,7 +6,7 @@
 /*   By: chford <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/21 09:59:02 by chford            #+#    #+#             */
-/*   Updated: 2019/02/25 21:19:10 by chford           ###   ########.fr       */
+/*   Updated: 2019/02/26 09:57:36 by chford           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,18 +57,19 @@ char	*ft_strjoin_nl(char *s1, char *s2)
 	return (string);
 }
 
-char	*prepare_s1(t_cursor *fd_s, int *length)
+char	*prepare_s1(t_cursor *fd_s, int *length, char **line)
 {
 	int				i;
 	int				j;
 	char			*s1;
 
+	*length = count_line_chars(fd_s->s, fd_s->value);
 	*length = (*length < 0) ? (*length) * -1 : *length;
 	if (fd_s->complete && fd_s->value != 0 && fd_s->s[(fd_s->value)] == '\0')
 		return (0);
 	i = fd_s->value;
 	j = 0;
-	if(!(s1 = (char *)malloc(sizeof(char) * (*length + 1))))
+	if (!(s1 = (char *)malloc(sizeof(char) * (*length + 1))))
 		return (0);
 	while (j < *length)
 	{
@@ -78,31 +79,39 @@ char	*prepare_s1(t_cursor *fd_s, int *length)
 	s1[j] = '\0';
 	fd_s->value += *length + 1;
 	if ((fd_s->s)[fd_s->value - 1] == '\n')
+	{
 		*length = -1;
+		*line = s1;
+	}
 	return (s1);
 }
 
-char	*prepare_s2(t_cursor *f, int fd, int *return_val, int index)
+char	*prepare_s2(t_cursor *f, int fd, int *return_val, int i)
 {
 	char	*s2;
 	int		length;
-	int		ret;
+	int		r;
 
 	s2 = (char *)ft_memalloc(sizeof(char) * 1);
-	index = f->value;
-	while (!(ft_strichr(f->s, '\n', index)) && (ret = read(fd, f->s, BUFF_SIZE)))
+	i = f->value;
+	while (!(ft_strichr(f->s, '\n', i)) && (r = read(fd, f->s, BUFF_SIZE)) > 0)
 	{
-		((f)->s)[ret] = '\0';
+		((f)->s)[r] = '\0';
 		length = count_line_chars(f->s, 0);
 		length = (length < 0) ? (length * -1) : length;
-		index = 0;
+		i = 0;
 		if (!(s2 = ft_strjoin_nl(s2, f->s)))
 			return (0);
 		f->value = length + 1;
 	}
 	f->touched = 1;
-	*return_val = (ret == 0) ? 0 : 1;
-	f->complete = (ret < BUFF_SIZE) ? 1 : 0;
+	int hold = ft_strlen(f->s);
+	*return_val = (r == 0) ? 0 : 1;
+	if (r == -1)
+		*return_val = -1;
+	if (r < BUFF_SIZE && hold == length + 1)
+		*return_val = 0;
+	f->complete = (r < BUFF_SIZE) ? 1 : 0;
 	return (s2);
 }
 
@@ -113,17 +122,15 @@ int		get_next_line(const int fd, char **line)
 	char			*s2;
 	int				length;
 
+	if (fd < 0 || !line)
+		return (-1);
 	s1 = 0;
 	if ((fd_store[fd]).touched == 1)
 	{
-		length = count_line_chars((fd_store[fd]).s, (fd_store[fd]).value);
-		if (!(s1 = prepare_s1(&(fd_store[fd]), &length)))
+		if (!(s1 = prepare_s1(&(fd_store[fd]), &length, line)))
 			return (-1);
 		if (length < 0)
-		{
-			*line = s1;
 			return (1);
-		}
 	}
 	else
 		(fd_store[fd]).value = 0;
