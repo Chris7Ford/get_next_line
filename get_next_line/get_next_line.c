@@ -6,7 +6,7 @@
 /*   By: chford <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/21 09:59:02 by chford            #+#    #+#             */
-/*   Updated: 2019/02/26 09:57:36 by chford           ###   ########.fr       */
+/*   Updated: 2019/02/26 18:53:56 by chford           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,23 +59,22 @@ char	*ft_strjoin_nl(char *s1, char *s2)
 
 char	*prepare_s1(t_cursor *fd_s, int *length, char **line)
 {
-	int				i;
 	int				j;
 	char			*s1;
 
+	if (!(s1 = (char *)malloc(sizeof(char) * 1)))
+		return (0);
+	s1[0] = '\0';
 	*length = count_line_chars(fd_s->s, fd_s->value);
 	*length = (*length < 0) ? (*length) * -1 : *length;
 	if (fd_s->complete && fd_s->value != 0 && fd_s->s[(fd_s->value)] == '\0')
-		return (0);
-	i = fd_s->value;
-	j = 0;
+		return (s1);
+	j = -1;
+	free(s1);
 	if (!(s1 = (char *)malloc(sizeof(char) * (*length + 1))))
 		return (0);
-	while (j < *length)
-	{
-		s1[j] = (fd_s->s)[j + i];
-		j++;
-	}
+	while (++j < *length)
+		s1[j] = (fd_s->s)[j + fd_s->value];
 	s1[j] = '\0';
 	fd_s->value += *length + 1;
 	if ((fd_s->s)[fd_s->value - 1] == '\n')
@@ -101,15 +100,14 @@ char	*prepare_s2(t_cursor *f, int fd, int *return_val, int i)
 		length = (length < 0) ? (length * -1) : length;
 		i = 0;
 		if (!(s2 = ft_strjoin_nl(s2, f->s)))
-			return (0);
+			return ("");
 		f->value = length + 1;
 	}
 	f->touched = 1;
-	int hold = ft_strlen(f->s);
 	*return_val = (r == 0) ? 0 : 1;
 	if (r == -1)
 		*return_val = -1;
-	if (r < BUFF_SIZE && hold == length + 1)
+	if (r < BUFF_SIZE && ft_strlen(f->s) == (size_t)(length + 1))
 		*return_val = 0;
 	f->complete = (r < BUFF_SIZE) ? 1 : 0;
 	return (s2);
@@ -136,7 +134,7 @@ int		get_next_line(const int fd, char **line)
 		(fd_store[fd]).value = 0;
 	s2 = prepare_s2(&(fd_store[fd]), fd, &length, 0);
 	if (!(*line = (s1 && s2) ? ft_strjoin(s1, s2) : ft_strdup(s2)))
-		return (-1);
+		return (-2);
 	free(s1);
 	free(s2);
 	return (length);
