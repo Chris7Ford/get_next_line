@@ -1,0 +1,1 @@
+gcc -Wall -Werror -Wextra c_file.c libft/libft.a ../../get_next_line/get_next_line.c -g -o exec
