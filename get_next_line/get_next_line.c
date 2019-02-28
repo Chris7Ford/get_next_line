@@ -6,7 +6,7 @@
 /*   By: chford <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/21 09:59:02 by chford            #+#    #+#             */
-/*   Updated: 2019/02/26 18:53:56 by chford           ###   ########.fr       */
+/*   Updated: 2019/02/27 19:42:25 by chford           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ char	*prepare_s2(t_cursor *f, int fd, int *return_val, int i)
 
 	s2 = (char *)ft_memalloc(sizeof(char) * 1);
 	i = f->value;
-	while (!(ft_strichr(f->s, '\n', i)) && (r = read(fd, f->s, BUFF_SIZE)) > 0)
+	while (!(ft_strichr(f->s, '\n', i)) && r = (read(fd, f->s, BUFF_SIZE)) > 0)
 	{
 		((f)->s)[r] = '\0';
 		length = count_line_chars(f->s, 0);
@@ -107,8 +107,6 @@ char	*prepare_s2(t_cursor *f, int fd, int *return_val, int i)
 	*return_val = (r == 0) ? 0 : 1;
 	if (r == -1)
 		*return_val = -1;
-	if (r < BUFF_SIZE && ft_strlen(f->s) == (size_t)(length + 1))
-		*return_val = 0;
 	f->complete = (r < BUFF_SIZE) ? 1 : 0;
 	return (s2);
 }
