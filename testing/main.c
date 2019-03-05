@@ -6,7 +6,7 @@
 /*   By: chford <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/25 19:59:04 by chford            #+#    #+#             */
-/*   Updated: 2019/02/27 17:57:29 by chford           ###   ########.fr       */
+/*   Updated: 2019/03/05 11:33:54 by chford           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,17 +30,8 @@ int		main(void)
 		ft_putstr("Cant close");
 */	fd = open ("book", O_RDONLY);
 	if (fd == -1)
-		ft_putstr("OPENING FAILED BOI");
-	if (get_next_line(fd, &str) == 1)
-	{
-		while (get_next_line(fd, &str) == 1)
-		{
-			ft_putstr(str);
-			ft_putchar('\n');
-			free(str);
-		}
-	}
-	else
+		ft_putstr("OPENING FAILED");
+	while (get_next_line(fd, &str) == 1)
 	{
 		ft_putstr(str);
 		ft_putchar('\n');

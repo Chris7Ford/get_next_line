@@ -6,7 +6,7 @@
 /*   By: chford <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/21 09:42:05 by chford            #+#    #+#             */
-/*   Updated: 2019/02/26 07:47:03 by chford           ###   ########.fr       */
+/*   Updated: 2019/02/27 19:56:14 by chford           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,6 @@ struct						s_cursor
 	char					s[BUFF_SIZE + 1];
 };
 
-int			count_line_chars(char *string, int i);
+int			count_line_chars(char *string);
 int			get_next_line(const int fd, char **line);
 #endif
