@@ -6,7 +6,7 @@
 /*   By: chford <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/21 09:59:02 by chford            #+#    #+#             */
-/*   Updated: 2019/03/05 12:06:02 by chford           ###   ########.fr       */
+/*   Updated: 2019/03/05 13:09:01 by chford           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,8 @@ int		read_file(const int fd, char **fd_store, int *ret)
 	{
 		buffer[*ret] = '\0';
 		hold = *fd_store;
-		*fd_store = ft_strjoin(*fd_store, buffer);
+		if (!(*fd_store = ft_strjoin(*fd_store, buffer)))
+			return (0);
 		free(hold);
 	}
 	if (*ret == -1)
