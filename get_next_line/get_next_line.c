@@ -6,7 +6,7 @@
 /*   By: chford <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/21 09:59:02 by chford            #+#    #+#             */
-/*   Updated: 2019/03/05 13:09:01 by chford           ###   ########.fr       */
+/*   Updated: 2019/03/05 15:20:14 by chford           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,10 +41,11 @@ char	*chop_line(char **string)
 
 int		read_file(const int fd, char **fd_store, int *ret)
 {
-	char			buffer[BUFF_SIZE];
+	char			buffer[BUFF_SIZE + 1];
 	char			*hold;
 
-	while (!(ft_strchr(*fd_store, '\n')) && (*ret = read(fd, buffer, BUFF_SIZE)) > 0)
+	while (!(ft_strchr(*fd_store, '\n')) &&
+			(*ret = read(fd, buffer, BUFF_SIZE)) > 0)
 	{
 		buffer[*ret] = '\0';
 		hold = *fd_store;
@@ -62,6 +63,8 @@ int		get_next_line(const int fd, char **line)
 	static char		*fd_store[FD_MAX + 1];
 	int				ret;
 
+	if (fd < 0 || !line)
+		return (-1);
 	if (!(fd_store[fd]))
 		fd_store[fd] = ft_strnew(1);
 	if (!(fd_store[fd]) || !(read_file(fd, &(fd_store[fd]), &ret)))
